@@ -3,55 +3,167 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>BTag Import String Generator</title>
+<title>Generate Your Code</title>
 <style>
     body {
-        font-family: Arial, sans-serif;
-        margin: 20px;
+        margin: 0;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #1c1c1c;
+        color: #ffffff;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
     }
+
+    header {
+        padding: 20px;
+        background: #111;
+        border-bottom: 1px solid #333;
+        text-align: center;
+    }
+
+    header h1 {
+        margin: 0;
+        font-weight: 300;
+    }
+
+    main {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+    }
+
+    .container {
+        background-color: #2c2c2c;
+        padding: 40px;
+        border-radius: 8px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        max-width: 500px;
+        width: 100%;
+    }
+
+    .container h2 {
+        margin-top: 0;
+        font-weight: 300;
+        font-size: 2em;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 10px;
+        font-size: 1em;
+        font-weight: 400;
+    }
+
     input[type="text"] {
-        width: 300px;
-        padding: 8px;
-        margin-right: 10px;
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 20px;
+        border: none;
+        border-radius: 4px;
+        font-size: 1em;
+        background: #3a3a3a;
+        color: #fff;
     }
+
+    input[type="text"]::placeholder {
+        color: #aaa;
+    }
+
     button {
-        padding: 8px 16px;
+        background: #0078d4;
+        color: #fff;
+        border: none;
+        padding: 12px 24px;
+        font-size: 1em;
+        border-radius: 4px;
         cursor: pointer;
+        transition: background 0.2s ease;
+        width: 100%;
+        text-align: center;
     }
-    #output {
-        margin-top: 20px;
-        font-weight: bold;
-        color: #333;
+
+    button:hover {
+        background: #005ea0;
+    }
+
+    .output-section {
+        margin-top: 30px;
+    }
+
+    .output-section p {
+        background: #1c1c1c;
+        padding: 10px;
+        border-radius: 4px;
         word-break: break-all;
+    }
+
+    footer {
+        text-align: center;
+        padding: 20px;
+        background: #111;
+        border-top: 1px solid #333;
+        font-size: 0.9em;
+        color: #888;
+    }
+
+    @media (max-width: 600px) {
+        .container {
+            padding: 20px;
+        }
+
+        .container h2 {
+            font-size: 1.5em;
+        }
+
+        label, input, button {
+            font-size: 1em;
+        }
     }
 </style>
 </head>
 <body>
-<h1>BTag Import String Generator</h1>
-<p>Enter a BattleTag (e.g. btag#9999) and click "Generate".</p>
-<input type="text" id="btagInput" placeholder="e.g. btag#9999" />
-<button type="button" onclick="generateImportString()">Generate</button>
+<header>
+    <h1>Generate your code</h1>
+</header>
+<main>
+    <div class="container">
+        <h2>Enter your details</h2>
+        <label for="btagInput">Enter your Battle.net username:</label>
+        <input type="text" id="btagInput" placeholder="Name#1234" />
 
-<div id="output"></div>
+        <button type="button" onclick="generateCode()">Generate</button>
+
+        <div class="output-section" id="outputSection" style="display:none;">
+            <h3>Your Import String:</h3>
+            <p id="output"></p>
+        </div>
+    </div>
+</main>
+<footer>
+    &copy; 2024 Your Company. All rights reserved.
+</footer>
 
 <script>
-function generateImportString() {
+function generateCode() {
     const btag = document.getElementById('btagInput').value.trim();
     if (!btag) {
-        document.getElementById('output').textContent = "Please enter a valid BattleTag.";
+        alert("Please enter a valid BattleTag.");
         return;
     }
 
-    // Append the secret suffix
-    const combined = btag + "vridtcetvrdice";
+    // Append the secret suffix (unchanged from previous code)
+    const suffix = "vridtcetvrdice";
+    const combined = btag + suffix;
+    const encoded = btoa(combined); // Base64 encode
 
-    // Base64 encode the combined string
-    const importString = btoa(combined);
-
-    // Display the result
-    document.getElementById('output').textContent = "Import String: " + importString;
+    document.getElementById('output').textContent = encoded;
+    document.getElementById('outputSection').style.display = 'block';
 }
 </script>
-
 </body>
 </html>
