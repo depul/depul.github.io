@@ -16,7 +16,10 @@
         <label for="btagInput">Enter your Battle.net username:</label>
         <input type="text" id="btagInput" placeholder="Name#1234" />
 
-        <button type="button" onclick="generateCode()">Generate</button>
+        <div class="button-container">
+            <button type="button" class="reset-button" onclick="resetForm()">Reset</button>
+            <button type="button" onclick="generateCode()">Generate</button>
+        </div>
 
         <div class="output-section" id="outputSection" style="display:none;">
             <h3>Your Import String:</h3>
@@ -38,10 +41,16 @@ function generateCode() {
 
     const suffix = "vridtcetvrdice";
     const combined = btag + suffix;
-    const encoded = btoa(combined);
+    const encoded = btoa(unescape(encodeURIComponent(combined)));
 
     document.getElementById('output').textContent = encoded;
     document.getElementById('outputSection').style.display = 'block';
+}
+
+function resetForm() {
+    document.getElementById('btagInput').value = "";
+    document.getElementById('output').textContent = "";
+    document.getElementById('outputSection').style.display = 'none';
 }
 </script>
 </body>
