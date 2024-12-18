@@ -1,57 +1,240 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Generate Your Code</title>
-<link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <title>Yu-Gi-Oh! Card Marketplace</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<header>
-    <h1>Generate your code</h1>
-</header>
-<main>
-    <div class="container">
-        <h2>Enter your details</h2>
-        <label for="btagInput">Enter your Battle.net username:</label>
-        <input type="text" id="btagInput" placeholder="Name#1234" />
+    <header>
+        <h1>Yu-Gi-Oh! Card Marketplace</h1>
+         <nav>
+                <button onclick="document.getElementById('userAuthSection').scrollIntoView({ behavior: 'smooth' })">
+                  Authentication
+                </button>
+                <button onclick="document.getElementById('userProfileSection').scrollIntoView({ behavior: 'smooth' })">
+                    Profile
+                </button>
+                <button onclick="document.querySelector('.search-section').scrollIntoView({ behavior: 'smooth' })">
+                    Search
+                </button>
+                 <button onclick="document.querySelector('.filters').scrollIntoView({ behavior: 'smooth' })">
+                   Filter Listings
+                </button>
+                <button onclick="document.getElementById('listings').scrollIntoView({ behavior: 'smooth' })">
+                  Listings
+                </button>
+         </nav>
+    </header>
 
-        <div class="button-container">
-            <button type="button" class="reset-button" onclick="resetForm()">Reset</button>
-            <button type="button" onclick="generateCode()">Generate</button>
+    <!-- User Authentication Section -->
+    <div id="userAuthSection" class="section">
+        <!-- Login Form -->
+        <div id="loginForm" class="auth-form">
+            <h2>Login</h2>
+            <form onsubmit="handleLogin(event)">
+                <label for="loginEmail">Email</label>
+                <input type="email" id="loginEmail" placeholder="Enter your email" required>
+                <label for="loginPassword">Password</label>
+                <input type="password" id="loginPassword" placeholder="Enter your password" required>
+                <button type="submit">Login</button>
+            </form>
+            <p>
+                Don't have an account? 
+                <a href="javascript:void(0)" onclick="toggleAuthForms()">Register</a>
+            </p>
         </div>
 
-        <div class="output-section" id="outputSection" style="display:none;">
-            <h3>Your Import String:</h3>
-            <p id="output"></p>
+        <!-- Register Form -->
+        <div id="registerForm" class="auth-form hidden">
+            <h2>Register</h2>
+            <form onsubmit="handleRegister(event)">
+                <label for="registerUsername">Username</label>
+                <input type="text" id="registerUsername" placeholder="Enter your username" required>
+                 <label for="registerEmail">Email</label>
+                <input type="email" id="registerEmail" placeholder="Enter your email" required>
+                 <label for="registerPassword">Password</label>
+                <input type="password" id="registerPassword" placeholder="Enter your password" required>
+                <button type="submit">Register</button>
+            </form>
+            <p>
+                Already have an account? 
+                <a href="javascript:void(0)" onclick="toggleAuthForms()">Login</a>
+            </p>
         </div>
     </div>
-</main>
-<footer>
-    &copy; 2024 Your Company. All rights reserved.
-</footer>
 
-<script>
-function generateCode() {
-    const btag = document.getElementById('btagInput').value.trim();
-    if (!btag) {
-        alert("Please enter a valid BattleTag.");
-        return;
-    }
+    <!-- User Profile Section -->
+    <div id="userProfileSection" class="section hidden">
+        <div class="profile-header">
+            <div class="profile-image-container">
+                <img id="profileImage" src="default-profile.png" alt="Profile">
+                <label for="profileImageInput" class="change-image-btn">Change Image</label>
+                <input type="file" id="profileImageInput" accept="image/*" onchange="handleProfileImageChange(event)" hidden>
+            </div>
+            <div class="profile-info">
+                <h2 id="profileUsername">Username</h2>
+                <div class="seller-rating">
+                    <span id="sellerRating">Rating: 0</span>
+                    <span id="totalTrades">Trades: 0</span>
+                </div>
+            </div>
+            <button onclick="handleLogout()" class="logout-btn">Logout</button>
+        </div>
 
-    const suffix = "vridtcetvrdice";
-    const combined = btag + suffix;
-    const encoded = btoa(unescape(encodeURIComponent(combined)));
+        <div class="profile-tabs">
+            <button class="tab-btn active" onclick="switchTab('favorites')">Favorites</button>
+            <button class="tab-btn" onclick="switchTab('collection')">Collection</button>
+            <button class="tab-btn" onclick="switchTab('history')">Trading History</button>
+        </div>
 
-    document.getElementById('output').textContent = encoded;
-    document.getElementById('outputSection').style.display = 'block';
-}
+        <div class="tab-content">
+            <div id="favoritesTab" class="tab-pane">
+                <div id="favoriteCards" class="card-grid"></div>
+            </div>
+            <div id="collectionTab" class="tab-pane hidden">
+                <div id="collectionCards" class="card-grid"></div>
+            </div>
+            <div id="historyTab" class="tab-pane hidden">
+                <div id="tradingHistory" class="trading-history"></div>
+            </div>
+        </div>
+    </div>
 
-function resetForm() {
-    document.getElementById('btagInput').value = "";
-    document.getElementById('output').textContent = "";
-    document.getElementById('outputSection').style.display = 'none';
-}
-</script>
+    <!-- Search Section -->
+    <div class="search-section section">
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search cards..." autocomplete="off">
+            <div id="autocompleteList" class="autocomplete-items"></div>
+        </div>
+        <select id="cardType">
+            <option value="">All Types</option>
+            <!-- Other options -->
+             <option value="Normal Monster">Normal Monster</option>
+                <option value="Effect Monster">Effect Monster</option>
+                <option value="Tuner Monster">Tuner Monster</option>
+                <option value="Fusion Monster">Fusion Monster</option>
+                <option value="Synchro Monster">Synchro Monster</option>
+                <option value="XYZ Monster">XYZ Monster</option>
+                <option value="Link Monster">Link Monster</option>
+                <option value="Spell Card">Spell Card</option>
+                <option value="Trap Card">Trap Card</option>
+        </select>
+        <button onclick="searchCards()">Search</button>
+    </div>
+
+    <!-- Loading Indicator -->
+    <div id="loading" class="hidden">Loading...</div>
+
+    <!-- Cards Display -->
+    <div id="cardGrid" class="card-grid"></div>
+
+    <!-- Card Modal -->
+    <div id="cardModal" class="modal">
+        <div class="modal-content">
+            <span class="close">×</span>
+            <div id="modalContent"></div>
+            <div class="listing-form">
+                <h3>Create Listing</h3>
+                <form id="listingForm">
+                      <label for="price">Price</label>
+                    <input type="number" id="price" placeholder="Enter price" required>
+                     <label for="condition">Condition</label>
+                    <select id="condition" required>
+                        <option value="">Select Condition</option>
+                         <option value="Mint">Mint</option>
+                         <option value="Near Mint">Near Mint</option>
+                         <option value="Excellent">Excellent</option>
+                         <option value="Good">Good</option>
+                         <option value="Lightly Played">Lightly Played</option>
+                         <option value="Moderately Played">Moderately Played</option>
+                         <option value="Heavily Played">Heavily Played</option>
+                         <option value="Damaged">Damaged</option>
+                    </select>
+                    <button type="submit">Create Listing</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters Section -->
+    <div class="filters section">
+        <h2>Filter Listings</h2>
+         <div class="filter-group">
+            <label for="minPrice">Min Price:</label>
+            <input type="number" id="minPrice" placeholder="0">
+        </div>
+         <div class="filter-group">
+             <label for="maxPrice">Max Price:</label>
+            <input type="number" id="maxPrice" placeholder="Max">
+        </div>
+        <div class="filter-group">
+             <label for="rarityFilter">Rarity:</label>
+            <select id="rarityFilter">
+              <option value="">All Rarities</option>
+                <!-- Add other options -->
+                  <option value="Common">Common</option>
+                  <option value="Rare">Rare</option>
+                  <option value="Super Rare">Super Rare</option>
+                    <option value="Ultra Rare">Ultra Rare</option>
+                    <option value="Secret Rare">Secret Rare</option>
+                    <option value="Ultimate Rare">Ultimate Rare</option>
+                  <option value="Ghost Rare">Ghost Rare</option>
+                    <option value="Starlight Rare">Starlight Rare</option>
+                    <option value="Prismatic Secret Rare">Prismatic Secret Rare</option>
+
+            </select>
+        </div>
+        <div class="filter-group">
+            <label for="attributeFilter">Attribute:</label>
+            <select id="attributeFilter">
+                <option value="">All Attributes</option>
+                <option value="DARK">DARK</option>
+                <option value="EARTH">EARTH</option>
+                <option value="FIRE">FIRE</option>
+                <option value="LIGHT">LIGHT</option>
+                <option value="WATER">WATER</option>
+                <option value="WIND">WIND</option>
+                <option value="DIVINE">DIVINE</option>
+                 <option value="SPELL">SPELL</option>
+                 <option value="TRAP">TRAP</option>
+            </select>
+        </div>
+           <div class="filter-group">
+               <label for="levelFilter">Level/Rank:</label>
+                <select id="levelFilter">
+                    <option value="">Any</option>
+                     <option value="1">1</option>
+                     <option value="2">2</option>
+                     <option value="3">3</option>
+                     <option value="4">4</option>
+                     <option value="5">5</option>
+                     <option value="6">6</option>
+                     <option value="7">7</option>
+                     <option value="8">8</option>
+                     <option value="9">9</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                   <option value="12">12</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                  <label for="sortOption">Sort By:</label>
+                <select id="sortOption">
+                    <option value="">None</option>
+                    <option value="priceAsc">Price (Lowest)</option>
+                    <option value="priceDesc">Price (Highest)</option>
+                     <option value="dateListed">Date Listed (Newest)</option>
+                      <option value="rarity">Rarity (A-Z)</option>
+
+                </select>
+            </div>
+        <button onclick="displayListings()">Apply Filters</button>
+    </div>
+
+    <h2 class="section-title">Current Listings</h2>
+    <div id="listings" class="listings-grid section"></div>
+
+    <script src="script.js"></script>
 </body>
 </html>
